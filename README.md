@@ -1,2 +1,2 @@
-# ipc_gt
-Prototipo para aplicación IPC
+# Análisis estacional de los componentes del IPC
+Prototipo para aplicación para automatizar el análisis estacional de los componentes del IPC de Guatemala.
