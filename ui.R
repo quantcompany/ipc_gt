@@ -1,14 +1,16 @@
 
 shinyUI(fluidPage(
-    
+    tags$head(HTML(FB_metas)), 
   fluidRow(
       column(12,
       tags$h1("Análisis de las series del IPC de Guatemala",
-              style = "font-family: 'Palatino Linotype'; font-size: 3em; color:#008CFF")
+              style = "font-family: 'Palatino Linotype'; font-size: 3em; color:#434348"),
+      tags$i(tags$h3("Por: Alvaro Fuentes", style = "color:#017890"))
       )
   ),
+  fluidRow(column(1,HTML(twitter)),column(1,HTML(facebook_button)),column(10)),
   fluidRow(
-      column(12, tags$p(intro, style = "font-family: 'Lato', sans-serif; font-size: 15pt"))
+       column(12, tags$div(HTML(intro), style = "font-family: 'Lato', sans-serif; font-size: 14pt"))
   ),
   
   fluidRow(
@@ -41,13 +43,20 @@ shinyUI(fluidPage(
       column(6, h4(textOutput("text1"))),
       column(6, h4(textOutput("text2")))
   ),
+  
+  tags$hr(),
+  
   fluidRow(
       column(6, showOutput("shock",lib = "highcharts")),
-      column(6)
+      column(6, showOutput("forecast",lib = "highcharts"))
   ),
   fluidRow(
       column(6, h4(textOutput("text3"))),
-      column(6, tags$html("hello"))
-  )
+      column(6, h4(textOutput("text4")))
+  ),
+  
+    tags$hr(),
+    HTML(creditos)
+    
 
 ))

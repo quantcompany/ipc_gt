@@ -9,11 +9,13 @@ shinyServer(function(input, output) {
    decomp <- reactive({
        stl(serie(), t.window=12, s.window=7)
    })
- 
+   
+   fst <- reactive(forecast(decomp(), level = 90))
+  
    nombre_serie <- reactive({input$serie})
    nombre_reg <- reactive({input$region})
 
-#### Text for the first graph
+#### Text for the first chart
    output$text1 <- renderText({
        sr <- serie()
        if(sd(sr) < 0.01) return("No hay suficiente variación en la serie")
@@ -32,7 +34,8 @@ shinyServer(function(input, output) {
        out <- paste(part0, part1, part2)
        return(out)
        })
-### Text for the seasonal graph
+ 
+### Text for the seasonal chart
    output$text2 <- renderText({
        sr <- serie()
        if(sd(sr) < 0.01) return("No hay suficiente variación en la serie")
@@ -40,7 +43,7 @@ shinyServer(function(input, output) {
        maxi <- max(est); mini <- abs(min(est)); mean_sr <- mean(sr,na.rm = TRUE)
        value_est <- 50*(maxi+mini)/mean_sr
        
-       if(value_est >= 5){
+       if(value_est >= 4){
            est_med <- sort(tapply(est,mesesf,mean, na.rm = TRUE))
            meses_baj <- names(est_med)[1:2]
            meses_alt <- names(est_med)[11:12]
@@ -49,7 +52,7 @@ shinyServer(function(input, output) {
                     afectado por factores estacionales, mostrando por lo general, valores bajos en los meses
                     de ", month_table2[[meses_baj[1]]], " y ", month_table2[[meses_baj[2]]], ", y valores altos en el mes de ",
                     month_table2[[meses_alt[1]]], " y sobre todo en ", month_table2[[meses_alt[2]]],".")
-       }else if(value_est>=2 && value_est<5){
+       }else if(value_est>=1.5 && value_est<4){
            est_med <- sort(tapply(est,mesesf,mean, na.rm = TRUE))
            meses_baj <- names(est_med)[1:2]
            meses_alt <- names(est_med)[11:12]
@@ -58,7 +61,7 @@ shinyServer(function(input, output) {
                     moderadamente por factores estacionales, mostrando por lo general, valores bajos en los meses
                         de ", month_table2[[meses_baj[1]]], " y ", month_table2[[meses_baj[2]]], ", y valores altos en los meses de ",
                         month_table2[[meses_alt[1]]], " y ", month_table2[[meses_alt[2]]],".")
-       }else if(value_est>=1){
+       }else if(value_est>=0.8){
            out <- "En cuanto al análisis de estacionalidad, el índice analizado muestra una
            estacionalidad relativamente baja, es decir, aunque existen ciertas variaciones de carácter
            estacional, éstas no afectan al índice de manera importante."
@@ -70,41 +73,93 @@ shinyServer(function(input, output) {
        return(out)
    })
    
-### Text for the irregular graph
+### Text for the irregular chart
    output$text3 <- renderText({
        sr <- serie()
        if(sd(sr) < 0.01) return("No hay suficiente variación en la serie")
        irr <- decomp()$time.series[,3]
        sd_irr <- sd(irr, na.rm = TRUE)
        
-       if(sd_irr >= 2){
-           out <- "Los movimientos irregulares son un reflejo de todos aquellos factores
-                   que influyen en el movimiento del índice y que son distintos de la tendencia general y a la
-                   la variación estacional. El índice analízado muestra movimientos irregulares
+       if(sd_irr >= 1.5){
+           out <- "El índice analízado muestra movimientos irregulares
                    relativamente grandes, es decir, los precios de los productos/servicios que componen el índice tienden a ser muy volátiles
                    y suceptibles a múltiples factores que afectan la oferta y/o la demanda."
-       }else if(sd_irr>=0.5 && sd_irr<1.9){
-           out <- "Los movimientos irregulares son un reflejo de todos aquellos factores
-                   que influyen en el movimiento del índice y que son distintos de la tendencia general y a la
-                   la variación estacional. El índice analízado muestra movimientos irregulares de 
-                   nivel moderado, es decir, los precios de los productos/servicios que componen el índice muestran una volatilidad relativamente baja."
+       }else if(sd_irr>=0.4 && sd_irr<1.5){
+           out <- "El índice analízado muestra movimientos irregulares de nivel moderado, es decir, 
+                    los precios de los productos/servicios que componen el índice muestran una volatilidad moderada."
            
        }else{
-           out <- "Los movimientos irregulares son un reflejo de todos aquellos factores
-                   que influyen en el movimiento del índice y que son distintos de la tendencia general y a la
-                   la variación estacional. El índice analízado muestra movimientos irregulares muy pequeños, es decir,
+           out <- "El índice analízado muestra movimientos irregulares muy pequeños, es decir,
                     los precios de los productos/servicios que componen el índice son relativamente estables respecto de la tendencia general."
        }
 
        return(out)
        })
    
-
+### Text for the forecast chart
+   output$text4 <- renderText({
+       sr <- as.vector(serie())
+       if(sd(sr) < 0.01) return("No hay suficiente variación en la serie")
+       fst <- fst()
+       pronostico <- fst$mean[12]
+       pronosticoL <- fst$lower[12]
+       pronosticoH <- fst$upper[12]
+       
+       crec_dic <- round(100*(pronostico/sr[57] - 1), 1)
+       crec_dicL <- round(100*(pronosticoL/sr[57] - 1), 1)
+       crec_dicH <- round(100*(pronosticoH/sr[57] - 1), 1)
+       
+       amplitud <- 100*(pronosticoH-pronosticoL)/pronostico
+       
+       if(amplitud > 15){
+           out <- paste0("Según el modelo cuantitativo aplicado, se pronostica un cambio en el índice seleccionado de ",
+                         sprintf("%1.1f",crec_dic),"% para diciembre de 2016. Aunque debido al comportamiento histórico y volatilidad del índice,
+                         el márgen de amplitud para la predicción es bastante grande, siendo el límite inferior ",
+                         sprintf("%1.1f",pronosticoL)," y el superior ", sprintf("%1.1f",pronosticoH),",
+                         lo que equivale a un cambio porcentual de entre ", sprintf("%1.1f",crec_dicL), "% y ", sprintf("%1.1f",crec_dicH),"% 
+                         para diciembre de 2016."
+                         )
+       }else if(amplitud<=15 && amplitud > 4.5){
+           out <- paste0("Según el modelo cuantitativo aplicado, se pronostica un cambio en el índice seleccionado de ",
+                         sprintf("%1.1f",crec_dic),"% para diciembre de 2016. Sin embargo, debido al comportamiento histórico del índice, el márgen de amplitud para las
+                         predicciones es relativamente amplio, de entre ", sprintf("%1.1f",pronosticoL)," y ", 
+                         sprintf("%1.1f",pronosticoH),", lo que equivale a un cambio porcentual de entre ", 
+                         sprintf("%1.1f",crec_dicL), "% y ", sprintf("%1.1f",crec_dicH),"% para diciembre de 2016."
+           )
+       }else{
+       out <- paste0("Según el modelo cuantitativo aplicado, se pronostica un cambio en el índice seleccionado de ",
+                     sprintf("%1.1f",crec_dic),"% para diciembre de 2016. Debido al comportamiento histórico del índice, es posible tener un
+                     intervalo relativamente cerrado para las predicciones de entre ", sprintf("%1.1f",pronosticoL)," y ", 
+                     sprintf("%1.1f",pronosticoH),", lo que equivale a un cambio porcentual de entre ", 
+                     sprintf("%1.1f",crec_dicL), "% y ", sprintf("%1.1f",crec_dicH),"% para diciembre de 2016.")
+                         
+           
+       }
+       return(out)
+   })
+   
    # Report Title
   output$titulo <- renderText({
        reg <- toupper(names(regiones)[as.integer(nombre_reg())])
        paste0(nombre_serie(),", ", reg)
        })
+  
+  #### Gráfica de tendencia
+  output$ind_tend <- renderChart2({
+      dat <- data.frame("Fecha" = fechas, 
+                        "Indice" = as.vector(serie()),
+                        "Tendencia" = round(as.vector(decomp()$time.series[,2]),2)
+      )
+      h1 <- Highcharts$new()
+      h1$title(text = "Índice y Tendencia")
+      h1$chart(type = "line", width = 630, height = 410, zoomType = 'x')
+      h1$xAxis(categories = dat[["Fecha"]], labels = list(rotation = -45, step = 4))
+      h1$yAxis(title = list(text = "Indice"))
+      h1$series(data = dat[["Indice"]], name = "Indice", color = "#017890")
+      h1$series(data = dat[["Tendencia"]], name = "Tendencia", marker = list(radius=0), color = "#E95D22")
+      h1
+  })
+
 #### Gráfica estacional
   output$estacion <- renderChart2({
       dat <- data.frame("Fecha" = fechas, 
@@ -112,12 +167,13 @@ shinyServer(function(input, output) {
       )
       h1 <- Highcharts$new()
       h1$title(text = "Estacionalidad")
-      h1$chart(type = "line", width = 630, height = 410)
+      h1$chart(type = "line", width = 630, height = 410, zoomType = 'x')
       h1$xAxis(categories = dat[["Fecha"]], labels = list(rotation = -45, step = 4))
       #h1$yAxis(title = list(text = "Puntos"))
-      h1$series(data = dat[["Estacionalidad"]], name = "Estacionalidad", list(enabled = "false"))
+      h1$series(data = dat[["Estacionalidad"]], name = "Estacionalidad", list(enabled = "false"), color = "#017890")
       h1
   })
+
 #### Gráfica irregular
   output$shock <- renderChart2({
       dat <- data.frame("Fecha" = fechas, 
@@ -125,27 +181,38 @@ shinyServer(function(input, output) {
       )
       h1 <- Highcharts$new()
       h1$title(text = "Movimientos irregulares")
-      h1$chart(type = "column", width = 630, height = 410)
+      h1$chart(type = "column", width = 630, height = 410, zoomType = 'x')
       h1$xAxis(categories = dat[["Fecha"]], labels = list(rotation = -45, step = 4))
       h1$yAxis(title = list(text = "Shocks"))
-      h1$series(data = dat[["Shock"]], name = "Shocks")
-      h1
-  })
-#### Gráfica de tendencia
-  output$ind_tend <- renderChart2({
-      dat <- data.frame("Fecha" = fechas, 
-                        "Indice" = as.vector(serie()),
-                        "Tendencia" = round(as.vector(decomp()$time.series[,2]),2)
-                        )
-      h1 <- Highcharts$new()
-      h1$title(text = "Índice y Tendencia")
-      h1$chart(type = "line", width = 630, height = 410)
-      h1$xAxis(categories = dat[["Fecha"]], labels = list(rotation = -45, step = 4))
-      h1$yAxis(title = list(text = "Indice"))
-      h1$series(data = dat[["Indice"]], name = "Indice")
-      h1$series(data = dat[["Tendencia"]], name = "Tendencia", marker = list(radius=0))
-      #h1$plotOptions(series = list(dataLabels = list(enabled = "false")))
+      h1$series(data = dat[["Shock"]], name = "Shocks", color = "#017890")
       h1
   })
 
+#### Gráfica proyeccion 
+  output$forecast <- renderChart2({
+      fechas <- c(fechas[40:57],paste0(meses,"-2016"))
+      fst <- fst()
+      sr <- as.vector(serie()[40:57])
+      pronostico <- c(rep(NA,17),sr[18],round(fst$mean[1:12],2))
+      pronosticoL <- c(rep(NA,17),sr[18],round(fst$lower[1:12],2))
+      pronosticoH <- c(rep(NA,17),sr[18],round(fst$upper[1:12],2))
+      dat <- data.frame("Fecha" = fechas, 
+                        "Indice" = c(sr, rep(NA,12)),
+                        "Pronostico" = pronostico,
+                        "PronosticoL" = pronosticoL,
+                        "PronosticoH" = pronosticoH) 
+
+      
+      h1 <- Highcharts$new()
+      h1$title(text = "Pronóstico para 2016")
+      h1$subtitle(text = "Límites al 90% de confianza")
+      h1$chart(type = "line", width = 630, height = 410, zoomType = 'x')
+      h1$xAxis(categories = dat[["Fecha"]], labels = list(rotation = -45, step = 2))
+      h1$yAxis(title = list(text = "Indice"))
+      h1$series(data = dat[["Indice"]], name = "Indice", color = "#017890")
+      h1$series(data = dat[["Pronostico"]], name = "Pronóstico Medio", marker = list(radius=0), color = "#E95D22")
+      h1$series(data = dat[["PronosticoL"]], name = "Límite Inferior", marker = list(radius=0), color = "black")
+      h1$series(data = dat[["PronosticoH"]], name = "Límite Superior", marker = list(radius=0), color = "black")
+      h1
+  })  
 })
