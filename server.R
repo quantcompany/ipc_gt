@@ -81,19 +81,19 @@ shinyServer(function(input, output) {
            out <- "Los movimientos irregulares son un reflejo de todos aquellos factores
                    que influyen en el movimiento del índice y que son distintos de la tendencia general y a la
                    la variación estacional. El índice analízado muestra movimientos irregulares
-                   relativamente grandes, es decir, los precios de estos productos tienden a ser muy volátiles
+                   relativamente grandes, es decir, los precios de los productos/servicios que componen el índice tienden a ser muy volátiles
                    y suceptibles a múltiples factores que afectan la oferta y/o la demanda."
        }else if(sd_irr>=0.5 && sd_irr<1.9){
            out <- "Los movimientos irregulares son un reflejo de todos aquellos factores
                    que influyen en el movimiento del índice y que son distintos de la tendencia general y a la
                    la variación estacional. El índice analízado muestra movimientos irregulares de 
-                   nivel moderado, es decir, los precios de estos productos muestran una volatilidad relativamente baja."
+                   nivel moderado, es decir, los precios de los productos/servicios que componen el índice muestran una volatilidad relativamente baja."
            
        }else{
            out <- "Los movimientos irregulares son un reflejo de todos aquellos factores
                    que influyen en el movimiento del índice y que son distintos de la tendencia general y a la
-                   la variación estacional. El índice analízado es muestra movimientos irregulares muy pequeños, es decir,
-                    los precios son relativamente estables respecto de la tendencia general."
+                   la variación estacional. El índice analízado muestra movimientos irregulares muy pequeños, es decir,
+                    los precios de los productos/servicios que componen el índice son relativamente estables respecto de la tendencia general."
        }
 
        return(out)
@@ -126,7 +126,7 @@ shinyServer(function(input, output) {
       h1 <- Highcharts$new()
       h1$title(text = "Movimientos irregulares")
       h1$chart(type = "column", width = 630, height = 410)
-      h1$xAxis(categories = dat[["Fecha"]], labels = list(rotation = -90, step = 5))
+      h1$xAxis(categories = dat[["Fecha"]], labels = list(rotation = -45, step = 4))
       h1$yAxis(title = list(text = "Shocks"))
       h1$series(data = dat[["Shock"]], name = "Shocks")
       h1

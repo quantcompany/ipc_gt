@@ -44,6 +44,10 @@ shinyUI(fluidPage(
   fluidRow(
       column(6, showOutput("shock",lib = "highcharts")),
       column(6)
+  ),
+  fluidRow(
+      column(6, h4(textOutput("text3"))),
+      column(6, tags$html("hello"))
   )
 
 ))
