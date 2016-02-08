@@ -52,20 +52,23 @@ adj_perc <- function(num){
     }else{out <- "fuerte"}
     out
 }
+
 ##==========Parrafos===================    
 
-intro <- 'Esta es una aplicación interactiva para analizar los componentes del <b>Indice de Precios al Consumidor (IPC)</b> de Guatemala.<br>
-<b>Tendencia-Ciclo</b>: o simplemente <i>Tendencia</i>Indica la marcha general y persistente del la serie observada, es el componente de la serie que refleja la evolución de largo plazo, este componente también 
-recoge las oscilaciones periódicas de amplitud superior a un año: movimientos normalmente irregulares alrededor de la tendencia, en las que a diferencia de las variaciones estacionales, 
-tiene un período y amplitud variables. <br>
-<b>Estacionalidad</b>: es el movimiento periódico de corto plazo. Se trata de un componente causal debida a la influencia de ciertos fenómenos que se repiten de manera periódica en el periodo
-de un año, por ejemplo estaciones, periodos de siembra y cosecha, etc. <br>
+intro <- 'Esta es una aplicación interactiva para analizar el <b>Indice de Precios al Consumidor (IPC)</b> de Guatemala, 
+utilizando métodos provenientes del análisis series de tiempo. Con el objetivo de comprender el comportamiento de cada índice se
+descompone cada serie en los siguientes componentes:<br><br>
+<b>Tendencia-Ciclo</b>: o simplemente <i>tendencia</i> indica el comportamiento general y persistente del la serie observada, es el componente de la serie que refleja la evolución de largo plazo, 
+este componente también recoge las oscilaciones periódicas de amplitud superior a un año: movimientos cíclicos alrededor de la tendencia, 
+en las que a diferencia de las variaciones estacionales, tiene un período y amplitud variables. <br>
+<b>Estacionalidad</b>: es el movimiento periódico con duración igual a un año. Se trata de un componente causal debido a la influencia de ciertos fenómenos que se repiten de manera anual, 
+por ejemplo estaciones del año, periodos de siembra y cosecha, fechas especiales, etc. <br>
 <b>Movimientos irregulares</b>: o aleatorios, son los movimientos erráticos que reflejan todos aquellos factores que influyen en el movimiento del índice y 
-que son distintos de la tendencia general y a la la variación estacional, éstos no muestran ninguna regularidad, pueden darse debido a condiciones climáticas,
-pérdida de cosechas, factores internacionales y otros fenómenos exógenos.<br>
-El método utilizado es conocino como <b>"STL"</b> el cual es muy versátil y robusto para descomponer series de tiempo en sus respectivos componentes
-STL es un acrónimo para <i>"Seasonal and Trend decomposition using Loess" </i>, éste método fue desarrollado por <a href="http://cs.wellesley.edu/~cs315/Papers/stl%20statistical%20model.pdf">Cleveland et al.
-(1990)</a>.' 
+que son distintos de la tendencia general y a la la variación estacional, éstos no muestran ninguna regularidad, pueden darse por ejemplo, debido a condiciones climáticas,
+pérdida de cosechas, factores internacionales y otros fenómenos exógenos.<br><br>
+El método utilizado para realizar la descomponsición es conocino como <b>"STL"</b> el cual es muy versátil y robusto para descomponer series de tiempo en sus respectivos componentes.
+STL es un acrónimo para <i>"Seasonal and Trend decomposition using Loess" </i>, éste método fue desarrollado por <a href="http://cs.wellesley.edu/~cs315/Papers/stl%20statistical%20model.pdf" target="_blank">Cleveland et al.
+(1990)</a>. Los datos fueron obtenidos del sitio web del <a href = "http://www.ine.gob.gt/" target="_blank">Instituto Nacional de Estadística.</a><br>'
 
 creditos <- "Copyright (c) 2016, Quant Company. 
 Visítenos en <a href ='http://www.quantcompany.com' 
@@ -74,7 +77,10 @@ target = _blank'>www.quantcompany.com</a> o bien en
 o escribanos a afuentes@quantcompany.com para más información."
 
 
-#Botones sociales ===============
+#Botones sociales y fuentes ===============
+
+fuente <- "<link href='https://fonts.googleapis.com/css?family=Lato:300' rel='stylesheet' type='text/css'>"
+
 
 facebook_script <- '<div id="fb-root"></div>
 <script>(function(d, s, id) {

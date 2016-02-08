@@ -155,7 +155,7 @@ shinyServer(function(input, output) {
       h1$chart(type = "line", width = 630, height = 410, zoomType = 'x')
       h1$xAxis(categories = dat[["Fecha"]], labels = list(rotation = -45, step = 4))
       h1$yAxis(title = list(text = "Indice"))
-      h1$series(data = dat[["Indice"]], name = "Indice", color = "#017890")
+      h1$series(data = dat[["Indice"]], name = "Indice")
       h1$series(data = dat[["Tendencia"]], name = "Tendencia", marker = list(radius=0), color = "#E95D22")
       h1
   })
@@ -170,7 +170,7 @@ shinyServer(function(input, output) {
       h1$chart(type = "line", width = 630, height = 410, zoomType = 'x')
       h1$xAxis(categories = dat[["Fecha"]], labels = list(rotation = -45, step = 4))
       #h1$yAxis(title = list(text = "Puntos"))
-      h1$series(data = dat[["Estacionalidad"]], name = "Estacionalidad", list(enabled = "false"), color = "#017890")
+      h1$series(data = dat[["Estacionalidad"]], name = "Estacionalidad", list(enabled = "false"))
       h1
   })
 
@@ -184,7 +184,7 @@ shinyServer(function(input, output) {
       h1$chart(type = "column", width = 630, height = 410, zoomType = 'x')
       h1$xAxis(categories = dat[["Fecha"]], labels = list(rotation = -45, step = 4))
       h1$yAxis(title = list(text = "Shocks"))
-      h1$series(data = dat[["Shock"]], name = "Shocks", color = "#017890")
+      h1$series(data = dat[["Shock"]], name = "Shocks")
       h1
   })
 
@@ -209,7 +209,7 @@ shinyServer(function(input, output) {
       h1$chart(type = "line", width = 630, height = 410, zoomType = 'x')
       h1$xAxis(categories = dat[["Fecha"]], labels = list(rotation = -45, step = 2))
       h1$yAxis(title = list(text = "Indice"))
-      h1$series(data = dat[["Indice"]], name = "Indice", color = "#017890")
+      h1$series(data = dat[["Indice"]], name = "Indice")
       h1$series(data = dat[["Pronostico"]], name = "Pronóstico Medio", marker = list(radius=0), color = "#E95D22")
       h1$series(data = dat[["PronosticoL"]], name = "Límite Inferior", marker = list(radius=0), color = "black")
       h1$series(data = dat[["PronosticoH"]], name = "Límite Superior", marker = list(radius=0), color = "black")

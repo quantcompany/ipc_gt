@@ -1,6 +1,6 @@
 
 shinyUI(fluidPage(
-    tags$head(HTML(FB_metas)), 
+    tags$head(HTML(FB_metas), HTML(fuente)), 
   fluidRow(
       column(12,
       tags$h1("Análisis de las series del IPC de Guatemala",
@@ -10,9 +10,9 @@ shinyUI(fluidPage(
   ),
   fluidRow(column(1,HTML(twitter)),column(1,HTML(facebook_button)),column(10)),
   fluidRow(
-       column(12, tags$div(HTML(intro), style = "font-family: 'Lato', sans-serif; font-size: 14pt"))
+       column(12, tags$div(HTML(intro), style = "font-family: 'Lato', sans-serif; font-size: 14.5pt"))
   ),
-  
+  tags$hr(),
   fluidRow(
       column(2),
       column(4, wellPanel(
